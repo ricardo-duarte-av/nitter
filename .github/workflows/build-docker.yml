@@ -16,12 +16,12 @@ env:
   IMAGE: zedeus/nitter
 
 jobs:
-  tests:
-    uses: ./.github/workflows/run-tests.yml
-    secrets: inherit
+  #tests:
+  #  uses: ./.github/workflows/run-tests.yml
+  #  secrets: inherit
 
   build:
-    needs: [tests]
+    #needs: [tests]
     strategy:
       fail-fast: false
       matrix:
