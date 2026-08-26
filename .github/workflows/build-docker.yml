@@ -6,6 +6,7 @@ on:
       - "README.md"
     branches:
       - master
+  workflow_dispatch:
 
 concurrency:
   group: docker-publish-${{ github.ref }}
