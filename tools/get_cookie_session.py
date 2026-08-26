@@ -28,9 +28,15 @@ BEARER = ("Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz"
 
 
 def validate(auth_token, ct0):
-    """Confirm the cookies authenticate, returning the account's screen name."""
+    """Confirm the cookies authenticate against X.
+
+    Uses help/settings.json: it is a plain authenticated endpoint that still
+    exists (200 with valid cookies, 401 without). The old account/settings.json
+    and verify_credentials.json endpoints now return 404 (code 34) for everyone,
+    so they can't be used to check a session anymore.
+    """
     resp = requests.get(
-        "https://api.x.com/1.1/account/settings.json",
+        "https://api.x.com/1.1/help/settings.json",
         headers={
             "Authorization": BEARER,
             "x-csrf-token": ct0,
@@ -43,7 +49,7 @@ def validate(auth_token, ct0):
         },
     )
     if resp.status_code == 200:
-        return resp.json().get("screen_name")
+        return
 
     try:
         errors = resp.json().get("errors", [])
@@ -53,7 +59,8 @@ def validate(auth_token, ct0):
     if resp.status_code == 401:
         print("The auth_token/ct0 are wrong, expired, or swapped. "
               "Re-copy them from a browser that is currently logged in, "
-              "and make sure ct0 is the ~160-char token (not a 32-char one).")
+              "and make sure ct0 is the ~160-char token (not a 32-char one). "
+              "Note: logging out in that browser invalidates auth_token.")
     sys.exit(1)
 
 
@@ -66,10 +73,12 @@ if __name__ == "__main__":
     auth_token = sys.argv[1]
     ct0 = sys.argv[2]
     path = sys.argv[3]
-    username = sys.argv[4] if len(sys.argv) == 5 else None
+    # X no longer exposes an endpoint that returns the screen name for a cookie
+    # session, so the username is taken from the optional 4th argument. It is
+    # only used by Nitter for logging, so leaving it empty is harmless.
+    username = sys.argv[4] if len(sys.argv) == 5 else ""
 
-    screen_name = validate(auth_token, ct0)
-    username = username or screen_name
+    validate(auth_token, ct0)
 
     session_entry = {
         "kind": "cookie",
@@ -85,5 +94,6 @@ if __name__ == "__main__":
         print(f"Failed to write session information: {e}")
         sys.exit(1)
 
-    print(f"Authentication successful (@{screen_name}). "
+    who = f" (@{username})" if username else ""
+    print(f"Authentication successful{who}. "
           f"Cookie session appended to {path}")
