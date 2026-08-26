@@ -118,9 +118,9 @@ performance reasons.
 
 ### Docker
 
-Page for the Docker image: https://hub.docker.com/r/zedeus/nitter
+Page for the Docker image: https://github.com/ricardo-duarte-av/nitter/pkgs/container/nitter
 
-#### NOTE: The published image is multi-arch — `zedeus/nitter:latest` runs natively on both `amd64` and `arm64`.
+#### NOTE: The published image is multi-arch — `ghcr.io/ricardo-duarte-av/nitter:latest` runs natively on both `amd64` and `arm64`.
 
 To run Nitter with Docker, you'll need to install and run Redis separately
 before you can run the container. See below for how to also run Redis using
@@ -147,7 +147,7 @@ docker run -v $(pwd)/nitter.conf:/src/nitter.conf -d --network host nitter:lates
 A prebuilt Docker image is provided as well:
 
 ```bash
-docker run -v $(pwd)/nitter.conf:/src/nitter.conf -d --network host zedeus/nitter:latest
+docker run -v $(pwd)/nitter.conf:/src/nitter.conf -d --network host ghcr.io/ricardo-duarte-av/nitter:latest
 ```
 
 Using docker-compose to run both Nitter and Redis as different containers:
